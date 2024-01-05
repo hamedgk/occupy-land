@@ -19,8 +19,9 @@ func MinValue(state State, depth int) State {
 		return state
 	}
 	min := State{Counts: [3]int8{127, 127, 127}}
+	var term State
 	for idx := range oacs {
-		term := MaxValue(oacs[idx], depth+1)
+		term = MaxValue(oacs[idx], depth+1)
 		if min.Counts[Blue] > term.Counts[Blue] {
 			min = oacs[idx]
 		}
@@ -36,8 +37,12 @@ func MaxValue(state State, depth int) State {
 		return state
 	}
 	max := State{Counts: [3]int8{-127, -127, -127}}
+	var term State
 	for idx := range oacs {
-		term := MinValue(oacs[idx], depth+1)
+		term = MinValue(oacs[idx], depth+1)
+		if depth == 2 {
+			term.Print()
+		}
 		if max.Counts[Blue] < term.Counts[Blue] {
 			max = oacs[idx]
 		}
