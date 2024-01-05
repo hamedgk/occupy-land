@@ -3,7 +3,7 @@ package game
 import "fmt"
 
 type State struct {
-	Board     [N][N]uint8
+	Board      [N][N]uint8
 	Turn       Turn
 	IsTerminal bool
 	Counts     [3]int8
@@ -39,49 +39,49 @@ func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
 	case x == 0:
 		switch {
 		case y == 0:
-			state.addEmptyNeighbors(x+1, y, states, turn)
-			state.addEmptyNeighbors(x, y+1, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
 		case y == N-1:
-			state.addEmptyNeighbors(x, y-1, states, turn)
-			state.addEmptyNeighbors(x+1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
 		default:
-			state.addEmptyNeighbors(x, y-1, states, turn)
-			state.addEmptyNeighbors(x, y+1, states, turn)
-			state.addEmptyNeighbors(x+1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
 		}
 	case x == N-1:
 		switch {
 		case y == 0:
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x, y+1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
 		case y == N-1:
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x, y-1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
 		default:
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x, y-1, states, turn)
-			state.addEmptyNeighbors(x, y+1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
 		}
 	default:
 		switch {
 		case y == 0:
-			state.addEmptyNeighbors(x, y+1, states, turn)
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x+1, y, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
 		case y == N-1:
-			state.addEmptyNeighbors(x, y-1, states, turn)
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x+1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
 		default:
-			state.addEmptyNeighbors(x, y-1, states, turn)
-			state.addEmptyNeighbors(x, y+1, states, turn)
-			state.addEmptyNeighbors(x-1, y, states, turn)
-			state.addEmptyNeighbors(x+1, y, states, turn)
+			state.applyOneMove(x, y-1, states, turn)
+			state.applyOneMove(x, y+1, states, turn)
+			state.applyOneMove(x-1, y, states, turn)
+			state.applyOneMove(x+1, y, states, turn)
 		}
 	}
 }
 
-func (state *State) addEmptyNeighbors(x, y uint8, states *[]State, sturn Turn) {
+func (state *State) applyOneMove(x, y uint8, states *[]State, sturn Turn) {
 	if state.Board[x][y] == None {
 		copiedState := State{Board: state.Board, Turn: sturn, Counts: state.Counts}
 		copiedState.Board[x][y] = sturn
@@ -100,7 +100,7 @@ func (state *State) inferTheRest(ocount, scount int, oturn Turn) {
 				if state.Board[i][j] == None {
 					state.Board[i][j] = sturn
 					state.Counts[sturn]++
-				} 
+				}
 			}
 		}
 	} else if scount == 0 {
@@ -144,8 +144,7 @@ func (state *State) Print() {
 }
 
 func (state *State) Move(x, y uint8) {
-	//buff, turn, isterm, count
-	if state.Board[x][y] == None{
+	if state.Board[x][y] == None {
 		sturn := state.Turn
 		oturn := toggleTurn(sturn)
 		state.Counts[oturn]++
