@@ -3,7 +3,7 @@ package game
 import "fmt"
 
 type State struct {
-	Buffer     [N][N]uint8
+	Board     [N][N]uint8
 	Turn       Turn
 	IsTerminal bool
 	Counts     [3]int8
@@ -18,9 +18,9 @@ func (state *State) ExpandOpponentActions() []State {
 
 	for x := uint8(0); x < N; x++ {
 		for y := uint8(0); y < N; y++ {
-			if state.Buffer[x][y] == oturn {
+			if state.Board[x][y] == oturn {
 				state.possibleActions(x, y, &opponentStates, oturn)
-			} else if state.Buffer[x][y] == sturn {
+			} else if state.Board[x][y] == sturn {
 				state.possibleActions(x, y, &selfStates, sturn)
 			}
 		}
@@ -82,9 +82,9 @@ func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
 }
 
 func (state *State) addEmptyNeighbors(x, y uint8, states *[]State, sturn Turn) {
-	if state.Buffer[x][y] == None {
-		copiedState := State{Buffer: state.Buffer, Turn: sturn, Counts: state.Counts}
-		copiedState.Buffer[x][y] = sturn
+	if state.Board[x][y] == None {
+		copiedState := State{Board: state.Board, Turn: sturn, Counts: state.Counts}
+		copiedState.Board[x][y] = sturn
 		copiedState.Counts[sturn]++
 		*states = append(*states, copiedState)
 	}
@@ -97,8 +97,8 @@ func (state *State) inferTheRest(ocount, scount int, oturn Turn) {
 		state.Turn = sturn
 		for i := uint8(0); i < N; i++ {
 			for j := uint8(0); j < N; j++ {
-				if state.Buffer[i][j] == None {
-					state.Buffer[i][j] = sturn
+				if state.Board[i][j] == None {
+					state.Board[i][j] = sturn
 					state.Counts[sturn]++
 				} 
 			}
@@ -108,8 +108,8 @@ func (state *State) inferTheRest(ocount, scount int, oturn Turn) {
 		state.Turn = oturn
 		for i := uint8(0); i < N; i++ {
 			for j := uint8(0); j < N; j++ {
-				if state.Buffer[i][j] == None {
-					state.Buffer[i][j] = oturn
+				if state.Board[i][j] == None {
+					state.Board[i][j] = oturn
 					state.Counts[oturn]++
 				}
 			}
@@ -131,9 +131,9 @@ func (state *State) Print() {
 	fmt.Printf("-----------------------Turn: %v, Blue: %v, Red: %v, Terminal: %v\n", state.Turn, state.Counts[Blue], state.Counts[Red], state.IsTerminal)
 	for i := uint8(0); i < N; i++ {
 		for j := uint8(0); j < N; j++ {
-			if state.Buffer[i][j] == Blue {
+			if state.Board[i][j] == Blue {
 				fmt.Printf(" |B| ")
-			} else if state.Buffer[i][j] == Red {
+			} else if state.Board[i][j] == Red {
 				fmt.Printf(" |R| ")
 			} else {
 				fmt.Printf(" | | ")
@@ -145,11 +145,11 @@ func (state *State) Print() {
 
 func (state *State) Move(x, y uint8) {
 	//buff, turn, isterm, count
-	if state.Buffer[x][y] == None{
+	if state.Board[x][y] == None{
 		sturn := state.Turn
 		oturn := toggleTurn(sturn)
 		state.Counts[oturn]++
-		state.Buffer[x][y] = oturn
+		state.Board[x][y] = oturn
 		state.Turn = oturn
 	}
 }
