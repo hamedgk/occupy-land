@@ -28,6 +28,7 @@ func gg() {
 		genesis.Move(x, y)
 		genesis.Print()
 		a := game.MinValue(genesis, 1)
+
 		a.Print()
 		genesis = a
 	}
