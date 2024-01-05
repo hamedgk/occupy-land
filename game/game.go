@@ -40,9 +40,6 @@ func MaxValue(state State, depth int) State {
 	var term State
 	for idx := range oacs {
 		term = MinValue(oacs[idx], depth+1)
-		if depth == 2 {
-			term.Print()
-		}
 		if max.Counts[Blue] < term.Counts[Blue] {
 			max = oacs[idx]
 		}
