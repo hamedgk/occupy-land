@@ -29,14 +29,14 @@ func gg() {
 		genesis.Print()
 
 		acs := genesis.ExpandOpponentActions()
-		mm := game.State{Counts: [3]int8{127, 127, 127}}
-		for idx := range acs{
-			term := game.MinValue(acs[idx], 1)
-			if term < mm.Utility(){
-				mm = acs[idx]
+		max := game.State{Counts: [3]int8{-127, -127, -127}}
+		for idx := range acs {
+			min := game.MinValue(acs[idx])
+			if min > max.Utility() {
+				max = acs[idx]
 			}
 		}
-		genesis = mm
+		genesis = max
 		genesis.Print()
 	}
 

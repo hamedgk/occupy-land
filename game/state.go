@@ -27,8 +27,24 @@ func (state *State) ExpandOpponentActions() []State {
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
 		state.IsTerminal = true
-	} else {
-		state.inferTheRest(len(opponentStates), len(selfStates), oturn)
+	} else if len(opponentStates) == 0{
+		for x:=uint8(0); x<N; x++{
+			for y:=uint8(0); y<N; y++{
+				if state.Board[x][y] == None{
+					state.Board[x][y] = sturn
+					state.Counts[sturn]++
+				}
+			}
+		}
+	} else if len(selfStates) == 0{
+		for x:=uint8(0); x<N; x++{
+			for y:=uint8(0); y<N; y++{
+				if state.Board[x][y] == None{
+					state.Board[x][y] = oturn
+					state.Counts[oturn]++
+				}
+			}
+		}
 	}
 	//empty if terminal
 	return opponentStates
@@ -90,30 +106,14 @@ func (state *State) applyOneMove(x, y uint8, states *[]State, sturn Turn) {
 	}
 }
 
-func (state *State) inferTheRest(ocount, scount int, oturn Turn) {
-	sturn := toggleTurn(oturn)
-	if ocount == 0 {
+func (state *State) inferTheRest(opponentActions, selfActions []State) {
+	sturn := state.Turn
+	oturn := toggleTurn(sturn)
+
+	if len(opponentActions) == 0 {
+	} else if len(selfActions) == 0 {
+		state.Counts[oturn] = int8(N*N - uint8(state.Counts[sturn]))
 		state.IsTerminal = true
-		state.Turn = sturn
-		for i := uint8(0); i < N; i++ {
-			for j := uint8(0); j < N; j++ {
-				if state.Board[i][j] == None {
-					state.Board[i][j] = sturn
-					state.Counts[sturn]++
-				}
-			}
-		}
-	} else if scount == 0 {
-		state.IsTerminal = true
-		state.Turn = oturn
-		for i := uint8(0); i < N; i++ {
-			for j := uint8(0); j < N; j++ {
-				if state.Board[i][j] == None {
-					state.Board[i][j] = oturn
-					state.Counts[oturn]++
-				}
-			}
-		}
 	}
 }
 
@@ -153,6 +153,12 @@ func (state *State) Move(x, y uint8) {
 	}
 }
 
+func (state *State) MoveVoid() {
+	sturn := state.Turn
+	oturn := toggleTurn(sturn)
+	state.Turn = oturn
+}
+
 func (state *State) Utility() int8 {
-	return state.Counts[Red] - state.Counts[Blue]
+	return state.Counts[Blue]
 }
