@@ -152,3 +152,7 @@ func (state *State) Move(x, y uint8) {
 		state.Turn = oturn
 	}
 }
+
+func (state *State) Utility() int8 {
+	return state.Counts[Red] - state.Counts[Blue]
+}

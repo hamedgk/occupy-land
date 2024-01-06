@@ -27,10 +27,17 @@ func gg() {
 		}
 		genesis.Move(x, y)
 		genesis.Print()
-		a := game.MinValue(genesis, 1)
 
-		a.Print()
-		genesis = a
+		acs := genesis.ExpandOpponentActions()
+		mm := game.State{Counts: [3]int8{127, 127, 127}}
+		for idx := range acs{
+			term := game.MinValue(acs[idx], 1)
+			if term < mm.Utility(){
+				mm = acs[idx]
+			}
+		}
+		genesis = mm
+		genesis.Print()
 	}
 
 }

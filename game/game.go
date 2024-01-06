@@ -1,5 +1,7 @@
 package game
 
+import "math"
+
 type Game struct {
 	CurrentState State
 }
@@ -11,37 +13,31 @@ func NewGame() Game {
 	return Game{CurrentState: state}
 }
 
-func MinValue(state State, depth int) State {
+func MinValue(state State, depth int) int8 {
 	oacs := state.ExpandOpponentActions()
 	if state.IsTerminal {
-		//time.Sleep(2 * time.Second)
-		//state.Print()
-		return state
+		return state.Utility()
 	}
-	min := State{Counts: [3]int8{127, 127, 127}}
-	var term State
+	var min int8 = math.MaxInt8
 	for idx := range oacs {
-		term = MaxValue(oacs[idx], depth+1)
-		if min.Counts[Blue] > term.Counts[Blue] {
-			min = oacs[idx]
+		term := MaxValue(oacs[idx], depth+1)
+		if min > term {
+			min = term
 		}
 	}
 	return min
 }
 
-func MaxValue(state State, depth int) State {
+func MaxValue(state State, depth int) int8 {
 	oacs := state.ExpandOpponentActions()
 	if state.IsTerminal {
-		//time.Sleep(2 * time.Second)
-		//state.Print()
-		return state
+		return state.Utility()
 	}
-	max := State{Counts: [3]int8{-127, -127, -127}}
-	var term State
+	var max int8 = math.MinInt8
 	for idx := range oacs {
-		term = MinValue(oacs[idx], depth+1)
-		if max.Counts[Blue] < term.Counts[Blue] {
-			max = oacs[idx]
+		term := MinValue(oacs[idx], depth+1)
+		if max < term {
+			max = term
 		}
 	}
 	return max
