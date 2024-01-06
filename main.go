@@ -28,7 +28,7 @@ func gg() {
 		genesis.Move(x, y)
 		genesis.Print()
 
-		acs := genesis.ExpandOpponentActions()
+		acs,_ := genesis.ExpandOpponentActions()
 		max := game.State{Counts: [3]int8{-127, -127, -127}}
 		for idx := range acs {
 			min := game.MinValue(acs[idx])

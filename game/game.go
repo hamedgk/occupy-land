@@ -14,8 +14,8 @@ func NewGame() Game {
 }
 
 func MinValue(state State) int8 {
-	oacs := state.ExpandOpponentActions()
-	if state.IsTerminal {
+	oacs, isterm := state.ExpandOpponentActions()
+	if isterm{
 		return state.Utility()
 	}
 	var min int8 = math.MaxInt8
@@ -29,8 +29,8 @@ func MinValue(state State) int8 {
 }
 
 func MaxValue(state State) int8 {
-	oacs := state.ExpandOpponentActions()
-	if state.IsTerminal {
+	oacs, isterm := state.ExpandOpponentActions()
+	if isterm {
 		return state.Utility()
 	}
 	var max int8 = math.MinInt8

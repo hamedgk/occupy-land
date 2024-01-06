@@ -5,11 +5,10 @@ import "fmt"
 type State struct {
 	Board      [N][N]uint8
 	Turn       Turn
-	IsTerminal bool
 	Counts     [3]int8
 }
 
-func (state *State) ExpandOpponentActions() []State {
+func (state *State) ExpandOpponentActions() ([]State, bool) {
 	opponentStates := []State{}
 	selfStates := []State{}
 
@@ -26,28 +25,29 @@ func (state *State) ExpandOpponentActions() []State {
 		}
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
-		state.IsTerminal = true
-	} else if len(opponentStates) == 0{
-		for x:=uint8(0); x<N; x++{
-			for y:=uint8(0); y<N; y++{
-				if state.Board[x][y] == None{
-					state.Board[x][y] = sturn
-					state.Counts[sturn]++
-				}
-			}
-		}
-	} else if len(selfStates) == 0{
-		for x:=uint8(0); x<N; x++{
-			for y:=uint8(0); y<N; y++{
-				if state.Board[x][y] == None{
-					state.Board[x][y] = oturn
-					state.Counts[oturn]++
-				}
-			}
-		}
-	}
-	//empty if terminal
-	return opponentStates
+		return []State{}, true
+	} 
+	//else if len(opponentStates) == 0{
+	//	for x:=uint8(0); x<N; x++{
+	//		for y:=uint8(0); y<N; y++{
+	//			if state.Board[x][y] == None{
+	//				state.Board[x][y] = sturn
+	//				state.Counts[sturn]++
+	//			}
+	//		}
+	//	}
+	//	return []State{}, false
+	//} else if len(selfStates) == 0{
+	//	for x:=uint8(0); x<N; x++{
+	//		for y:=uint8(0); y<N; y++{
+	//			if state.Board[x][y] == None{
+	//				state.Board[x][y] = oturn
+	//				state.Counts[oturn]++
+	//			}
+	//		}
+	//	}
+	//	return []State{}, false
+	return opponentStates, false
 }
 
 func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
@@ -106,17 +106,6 @@ func (state *State) applyOneMove(x, y uint8, states *[]State, sturn Turn) {
 	}
 }
 
-func (state *State) inferTheRest(opponentActions, selfActions []State) {
-	sturn := state.Turn
-	oturn := toggleTurn(sturn)
-
-	if len(opponentActions) == 0 {
-	} else if len(selfActions) == 0 {
-		state.Counts[oturn] = int8(N*N - uint8(state.Counts[sturn]))
-		state.IsTerminal = true
-	}
-}
-
 func toggleTurn(stateTurn Turn) Turn {
 	if stateTurn == Red {
 		return Blue
@@ -128,7 +117,7 @@ func toggleTurn(stateTurn Turn) Turn {
 }
 
 func (state *State) Print() {
-	fmt.Printf("-----------------------Turn: %v, Blue: %v, Red: %v, Terminal: %v\n", state.Turn, state.Counts[Blue], state.Counts[Red], state.IsTerminal)
+	fmt.Printf("-----------------------Turn: %v, Blue: %v, Red: %v, \n", state.Turn, state.Counts[Blue], state.Counts[Red])
 	for i := uint8(0); i < N; i++ {
 		for j := uint8(0); j < N; j++ {
 			if state.Board[i][j] == Blue {
