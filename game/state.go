@@ -1,14 +1,20 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"text/tabwriter"
+
+	"github.com/fatih/color"
+)
 
 type State struct {
-	Board      [N][N]uint8
-	Turn       Turn
-	Counts     [3]int8
+	Board  [N][N]uint8
+	Turn   Turn
+	Counts [3]int8
 }
 
-func (state *State) ExpandOpponentActions() ([]State, bool) {
+func (state *State) ExpandOpponentActions() ExpansionInfo {
 	opponentStates := []State{}
 	selfStates := []State{}
 
@@ -25,29 +31,19 @@ func (state *State) ExpandOpponentActions() ([]State, bool) {
 		}
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
-		return []State{}, true
-	} 
-	//else if len(opponentStates) == 0{
-	//	for x:=uint8(0); x<N; x++{
-	//		for y:=uint8(0); y<N; y++{
-	//			if state.Board[x][y] == None{
-	//				state.Board[x][y] = sturn
-	//				state.Counts[sturn]++
-	//			}
-	//		}
-	//	}
-	//	return []State{}, false
-	//} else if len(selfStates) == 0{
-	//	for x:=uint8(0); x<N; x++{
-	//		for y:=uint8(0); y<N; y++{
-	//			if state.Board[x][y] == None{
-	//				state.Board[x][y] = oturn
-	//				state.Counts[oturn]++
-	//			}
-	//		}
-	//	}
-	//	return []State{}, false
-	return opponentStates, false
+		return ExpansionInfo{
+			OpponentActions:              nil,
+			IsTerminal:                   true,
+			AvailableOpponentActionCount: 0,
+			AvailableSelfActionCount:     0,
+		}
+	}
+	return ExpansionInfo{
+		OpponentActions:              opponentStates,
+		IsTerminal:                   false,
+		AvailableOpponentActionCount: len(opponentStates),
+		AvailableSelfActionCount:     len(selfStates),
+	}
 }
 
 func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
@@ -117,19 +113,28 @@ func toggleTurn(stateTurn Turn) Turn {
 }
 
 func (state *State) Print() {
-	fmt.Printf("-----------------------Turn: %v, Blue: %v, Red: %v, \n", state.Turn, state.Counts[Blue], state.Counts[Red])
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
+	greenBold := color.New(color.FgGreen, color.Bold)
+	red := color.New(color.FgRed, color.Bold)
+	color.Cyan("Turn: %v, Blue: %v, Red: %v, \n", state.Turn, state.Counts[Blue], state.Counts[Red])
+	for i := uint8(0); i < N; i++ {
+		greenBold.Fprintf(w, "\t%d\t", i)
+	}
+	fmt.Fprintf(w, "\n")
 	for i := uint8(0); i < N; i++ {
 		for j := uint8(0); j < N; j++ {
 			if state.Board[i][j] == Blue {
-				fmt.Printf(" |B| ")
+				red.Fprintf(w, "\tB\t")
 			} else if state.Board[i][j] == Red {
-				fmt.Printf(" |R| ")
+				red.Fprintf(w, "\tR\t")
 			} else {
-				fmt.Printf(" | | ")
+				red.Fprintf(w, "\t \t")
 			}
 		}
-		fmt.Println()
+		greenBold.Fprintf(w, "\t%d\t", i)
+		fmt.Fprintf(w, "\n")
 	}
+	w.Flush()
 }
 
 func (state *State) Move(x, y uint8) {
