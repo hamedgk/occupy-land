@@ -13,15 +13,15 @@ func main() {
 
 	genesis.Print()
 	for {
-		fmt.Print("x: ")
-		_, err1 := fmt.Scanf("%d", &x)
+		fmt.Println("x: ")
+		_, err1 := fmt.Scan(&x)
 		if err1 != nil {
 			fmt.Println("Error reading the first int:", err1)
 			return
 		}
 
-		fmt.Print("y: ")
-		_, err2 := fmt.Scanf("%d", &y)
+		fmt.Println("y: ")
+		_, err2 := fmt.Scan(&y)
 		if err2 != nil {
 			fmt.Println("Error reading the second int:", err2)
 			return
@@ -36,7 +36,6 @@ func main() {
 		for idx := range acs {
 			max = game.MinMax(acs[idx], math.MinInt, math.MaxInt, 9)
 			if max < minUtil {
-				//maxUtil = game.Utility(&acs[idx])
 				minUtil = max
 				minVal = acs[idx]
 			}

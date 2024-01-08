@@ -2,7 +2,6 @@ package game
 
 import (
 	"math"
-	"math/rand"
 )
 
 type Game struct {
@@ -11,12 +10,10 @@ type Game struct {
 
 func NewGame() Game {
 	state := State{Turn: Red}
-	var randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
-	//state.Move(N/2, N/2-1)
-	state.Move(randx, randy)
-	randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
-	//state.Move(N/2-1, N/2)
-	state.Move(randx, randy)
+	//var randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
+	state.Move(N/2, N/2-1)
+	//randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
+	state.Move(N/2-1, N/2)
 	return Game{CurrentState: state}
 }
 

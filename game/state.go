@@ -19,7 +19,7 @@ func (state *State) Expand() ([]State, bool) {
 	selfStates := []State{}
 
 	sturn := state.Turn
-	oturn := toggleTurn(sturn)
+	oturn := flipTurn(sturn)
 
 	for x := 0; x < N; x++ {
 		for y := 0; y < N; y++ {
@@ -32,11 +32,34 @@ func (state *State) Expand() ([]State, bool) {
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
 		return opponentStates, true
-	} else if len(opponentStates) != 0 {
+	} else if len(opponentStates) == 0{
+		for x := 0; x < N; x++ {
+			for y := 0; y < N; y++ {
+				if state.Board[x][y] == None{
+					state.Board[x][y] = sturn
+					state.Counts[sturn]++
+				}
+			}
+		}
+		return []State{}, true
+	}else if len(selfStates) == 0{
+		for x := 0; x < N; x++ {
+			for y := 0; y < N; y++ {
+				if state.Board[x][y] == None{
+					state.Board[x][y] = oturn
+					state.Counts[oturn]++
+				}
+			}
+		}
+		return []State{}, true
+	}else{
 		return opponentStates, false
-	} else {
-		return selfStates, false
 	}
+	//else if len(opponentStates) != 0 {
+	//	return opponentStates, false
+	//} else {
+	//	return selfStates, false
+	//}
 }
 
 func (state *State) possibleActions(x, y int, states *[]State, turn Turn) {
@@ -95,7 +118,7 @@ func (state *State) applyOneMove(x, y int, states *[]State, sturn Turn) {
 	}
 }
 
-func toggleTurn(stateTurn Turn) Turn {
+func flipTurn(stateTurn Turn) Turn {
 	if stateTurn == Red {
 		return Blue
 	} else if stateTurn == Blue {
@@ -133,7 +156,7 @@ func (state *State) Print() {
 func (state *State) Move(x, y int) {
 	if state.Board[x][y] == None {
 		sturn := state.Turn
-		oturn := toggleTurn(sturn)
+		oturn := flipTurn(sturn)
 		state.Counts[oturn]++
 		state.Board[x][y] = oturn
 		state.Turn = oturn
