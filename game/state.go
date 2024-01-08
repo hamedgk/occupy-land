@@ -55,11 +55,6 @@ func (state *State) Expand() ([]State, bool) {
 	}else{
 		return opponentStates, false
 	}
-	//else if len(opponentStates) != 0 {
-	//	return opponentStates, false
-	//} else {
-	//	return selfStates, false
-	//}
 }
 
 func (state *State) possibleActions(x, y int, states *[]State, turn Turn) {

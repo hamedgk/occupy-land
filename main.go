@@ -34,7 +34,7 @@ func main() {
 		minVal := game.State{}
 		var max int
 		for idx := range acs {
-			max = game.MinMax(acs[idx], math.MinInt, math.MaxInt, 9)
+			max = game.MaxValue(acs[idx], math.MinInt, math.MaxInt, 10)
 			if max < minUtil {
 				minUtil = max
 				minVal = acs[idx]

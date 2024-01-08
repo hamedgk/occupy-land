@@ -24,7 +24,7 @@ func MinValue(state State, alpha, beta, depth int) int {
 	}
 	var min int = math.MaxInt
 	for idx := range acs {
-		term := MinMax(acs[idx], alpha, beta, depth-1)
+		term := MaxValue(acs[idx], alpha, beta, depth-1)
 		if min > term {
 			min = term
 		}
@@ -45,7 +45,7 @@ func MaxValue(state State, alpha, beta, depth int) int {
 	}
 	var max int = math.MinInt
 	for idx := range acs {
-		term := MinMax(acs[idx], alpha, beta, depth-1)
+		term := MinValue(acs[idx], alpha, beta, depth-1)
 		if max < term {
 			max = term
 		}
@@ -57,18 +57,4 @@ func MaxValue(state State, alpha, beta, depth int) int {
 		}
 	}
 	return max
-}
-
-func MinMax(state State, alpha, beta, depth int) int{
-	_, isterm := state.Expand()
-	if isterm || depth == 0{
-		return Utility(&state)
-	}
-	var val int
-	if state.Turn == Blue{
-		val = MinValue(state, alpha, beta, depth-1)		
-	}else if state.Turn == Red{
-		val = MaxValue(state, alpha, beta, depth-1)		
-	}
-	return val
 }
