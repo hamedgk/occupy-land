@@ -11,7 +11,7 @@ import (
 type State struct {
 	Board  [N][N]uint8
 	Turn   Turn
-	Counts [3]int8
+	Counts [3]int
 }
 
 func (state *State) Expand() ([]State, bool) {
@@ -21,8 +21,8 @@ func (state *State) Expand() ([]State, bool) {
 	sturn := state.Turn
 	oturn := toggleTurn(sturn)
 
-	for x := uint8(0); x < N; x++ {
-		for y := uint8(0); y < N; y++ {
+	for x := 0; x < N; x++ {
+		for y := 0; y < N; y++ {
 			if state.Board[x][y] == oturn {
 				state.possibleActions(x, y, &opponentStates, oturn)
 			} else if state.Board[x][y] == sturn {
@@ -36,7 +36,7 @@ func (state *State) Expand() ([]State, bool) {
 	return opponentStates, false
 }
 
-func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
+func (state *State) possibleActions(x, y int, states *[]State, turn Turn) {
 	switch {
 	case x == 0:
 		switch {
@@ -83,7 +83,7 @@ func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
 	}
 }
 
-func (state *State) applyOneMove(x, y uint8, states *[]State, sturn Turn) {
+func (state *State) applyOneMove(x, y int, states *[]State, sturn Turn) {
 	if state.Board[x][y] == None {
 		copiedState := State{Board: state.Board, Turn: sturn, Counts: state.Counts}
 		copiedState.Board[x][y] = sturn
@@ -107,12 +107,12 @@ func (state *State) Print() {
 	greenBold := color.New(color.FgGreen, color.Bold)
 	red := color.New(color.FgRed, color.Bold)
 	color.Cyan("Turn: %v, Blue: %v, Red: %v\n", state.Turn, state.Counts[Blue], state.Counts[Red])
-	for i := uint8(0); i < N; i++ {
+	for i := 0; i < N; i++ {
 		greenBold.Fprintf(w, "\t%d\t", i)
 	}
 	fmt.Fprintf(w, "\n")
-	for i := uint8(0); i < N; i++ {
-		for j := uint8(0); j < N; j++ {
+	for i := 0; i < N; i++ {
+		for j := 0; j < N; j++ {
 			if state.Board[i][j] == Blue {
 				red.Fprintf(w, "\tB\t")
 			} else if state.Board[i][j] == Red {
@@ -127,7 +127,7 @@ func (state *State) Print() {
 	w.Flush()
 }
 
-func (state *State) Move(x, y uint8) {
+func (state *State) Move(x, y int) {
 	if state.Board[x][y] == None {
 		sturn := state.Turn
 		oturn := toggleTurn(sturn)
@@ -137,18 +137,12 @@ func (state *State) Move(x, y uint8) {
 	}
 }
 
-func (state *State) MoveVoid() {
-	sturn := state.Turn
-	oturn := toggleTurn(sturn)
-	state.Turn = oturn
-}
-
-func Utility(state *State) int8 {
+func Utility(state *State) int {
 	blueAcs := []State{}
 	redAcs := []State{}
 
-	for x := uint8(0); x < N; x++ {
-		for y := uint8(0); y < N; y++ {
+	for x := 0; x < N; x++ {
+		for y := 0; y < N; y++ {
 			if state.Board[x][y] == Blue {
 				state.possibleActions(x, y, &blueAcs, Blue)
 			} else if state.Board[x][y] == Red {
@@ -156,5 +150,6 @@ func Utility(state *State) int8 {
 			}
 		}
 	}
-	return int8(len(blueAcs) - len(redAcs))
+	return len(blueAcs) - len(redAcs)
+	//return 1
 }

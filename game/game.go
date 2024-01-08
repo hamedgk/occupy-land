@@ -1,6 +1,9 @@
 package game
 
-import "math"
+import (
+	"math"
+	"math/rand"
+)
 
 type Game struct {
 	CurrentState State
@@ -8,19 +11,23 @@ type Game struct {
 
 func NewGame() Game {
 	state := State{Turn: Red}
-	state.Move(N/2, N/2-1)
-	state.Move(N/2-1, N/2)
+	var randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
+	//state.Move(N/2, N/2-1)
+	state.Move(randx, randy)
+	randx, randy = rand.Intn(int(N)), rand.Intn(int(N))
+	//state.Move(N/2-1, N/2)
+	state.Move(randx, randy)
 	return Game{CurrentState: state}
 }
 
-func MinValue(state State, alpha, beta int8) int8 {
+func MinValue(state State, alpha, beta, depth int) int {
 	acs, isterm := state.Expand()
-	if isterm {
+	if isterm || depth == 0{
 		return Utility(&state)
 	}
-	var min int8 = math.MaxInt8
+	var min int = math.MaxInt
 	for idx := range acs {
-		term := MaxValue(acs[idx], alpha, beta)
+		term := MaxValue(acs[idx], alpha, beta, depth-1)
 		if min > term {
 			min = term
 		}
@@ -34,14 +41,14 @@ func MinValue(state State, alpha, beta int8) int8 {
 	return min
 }
 
-func MaxValue(state State, alpha, beta int8) int8 {
+func MaxValue(state State, alpha, beta, depth int) int {
 	acs, isterm := state.Expand()
-	if isterm {
+	if isterm || depth == 0{
 		return Utility(&state)
 	}
-	var max int8 = math.MinInt8
+	var max int = math.MinInt
 	for idx := range acs {
-		term := MinValue(acs[idx], alpha, beta)
+		term := MinValue(acs[idx], alpha, beta, depth-1)
 		if max < term {
 			max = term
 		}

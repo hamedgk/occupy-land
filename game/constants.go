@@ -3,7 +3,7 @@ package game
 type Turn = uint8
 
 const (
-	N uint8 = 4
+	N = 4
 
 	None Turn = 0
 	Red  Turn = 1
