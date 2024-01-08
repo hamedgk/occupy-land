@@ -14,7 +14,7 @@ type State struct {
 	Counts [3]int8
 }
 
-func (state *State) ExpandOpponentActions() ExpansionInfo {
+func (state *State) Expand() ([]State, bool) {
 	opponentStates := []State{}
 	selfStates := []State{}
 
@@ -31,19 +31,9 @@ func (state *State) ExpandOpponentActions() ExpansionInfo {
 		}
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
-		return ExpansionInfo{
-			OpponentActions:              nil,
-			IsTerminal:                   true,
-			AvailableOpponentActionCount: 0,
-			AvailableSelfActionCount:     0,
-		}
+		return opponentStates, true
 	}
-	return ExpansionInfo{
-		OpponentActions:              opponentStates,
-		IsTerminal:                   false,
-		AvailableOpponentActionCount: len(opponentStates),
-		AvailableSelfActionCount:     len(selfStates),
-	}
+	return opponentStates, false
 }
 
 func (state *State) possibleActions(x, y uint8, states *[]State, turn Turn) {
@@ -116,7 +106,7 @@ func (state *State) Print() {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	greenBold := color.New(color.FgGreen, color.Bold)
 	red := color.New(color.FgRed, color.Bold)
-	color.Cyan("Turn: %v, Blue: %v, Red: %v, \n", state.Turn, state.Counts[Blue], state.Counts[Red])
+	color.Cyan("Turn: %v, Blue: %v, Red: %v\n", state.Turn, state.Counts[Blue], state.Counts[Red])
 	for i := uint8(0); i < N; i++ {
 		greenBold.Fprintf(w, "\t%d\t", i)
 	}
@@ -153,6 +143,18 @@ func (state *State) MoveVoid() {
 	state.Turn = oturn
 }
 
-func (state *State) Utility() int8 {
-	return state.Counts[Blue]
+func Utility(state *State) int8 {
+	blueAcs := []State{}
+	redAcs := []State{}
+
+	for x := uint8(0); x < N; x++ {
+		for y := uint8(0); y < N; y++ {
+			if state.Board[x][y] == Blue {
+				state.possibleActions(x, y, &blueAcs, Blue)
+			} else if state.Board[x][y] == Red {
+				state.possibleActions(x, y, &redAcs, Red)
+			}
+		}
+	}
+	return int8(len(blueAcs) - len(redAcs))
 }

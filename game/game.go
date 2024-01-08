@@ -14,13 +14,13 @@ func NewGame() Game {
 }
 
 func MinValue(state State, alpha, beta int8) int8 {
-	expinfo := state.ExpandOpponentActions()
-	if expinfo.IsTerminal {
-		return state.Utility()
+	acs, isterm := state.Expand()
+	if isterm {
+		return Utility(&state)
 	}
 	var min int8 = math.MaxInt8
-	for idx := range expinfo.OpponentActions {
-		term := MaxValue(expinfo.OpponentActions[idx], alpha, beta)
+	for idx := range acs {
+		term := MaxValue(acs[idx], alpha, beta)
 		if min > term {
 			min = term
 		}
@@ -35,13 +35,13 @@ func MinValue(state State, alpha, beta int8) int8 {
 }
 
 func MaxValue(state State, alpha, beta int8) int8 {
-	expinfo := state.ExpandOpponentActions()
-	if expinfo.IsTerminal {
-		return state.Utility()
+	acs, isterm := state.Expand()
+	if isterm {
+		return Utility(&state)
 	}
 	var max int8 = math.MinInt8
-	for idx := range expinfo.OpponentActions {
-		term := MinValue(expinfo.OpponentActions[idx], alpha, beta)
+	for idx := range acs {
+		term := MinValue(acs[idx], alpha, beta)
 		if max < term {
 			max = term
 		}

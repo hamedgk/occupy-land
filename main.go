@@ -28,15 +28,17 @@ func gg() {
 		genesis.Move(x, y)
 		genesis.Print()
 
-		expinfo := genesis.ExpandOpponentActions()
-		max := game.State{Counts: [3]int8{-127, -127, -127}}
-		for idx := range expinfo.OpponentActions {
-			min := game.MinValue(expinfo.OpponentActions[idx], -127, 127)
-			if min > max.Utility() {
-				max = expinfo.OpponentActions[idx]
+		acs, _ := genesis.Expand()
+		var maxUtil int8 = -127
+		maxVal := game.State{}
+		for idx := range acs {
+			min := game.MinValue(acs[idx], -127, 127)
+			if min > maxUtil {
+				maxUtil = game.Utility(&acs[idx])
+				maxVal = acs[idx]
 			}
 		}
-		genesis = max
+		genesis = maxVal
 		genesis.Print()
 	}
 
