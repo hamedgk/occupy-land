@@ -30,18 +30,18 @@ func main() {
 		genesis.Print()
 
 		acs, _ := genesis.Expand()
-		maxUtil := math.MinInt
-		maxVal := game.State{}
-		var min int
+		minUtil := math.MaxInt
+		minVal := game.State{}
+		var max int
 		for idx := range acs {
-			min = game.MinValue(acs[idx], math.MinInt, math.MaxInt, 9)
-			if min > maxUtil {
+			max = game.MinMax(acs[idx], math.MinInt, math.MaxInt, 9)
+			if max < minUtil {
 				//maxUtil = game.Utility(&acs[idx])
-				maxUtil = min
-				maxVal = acs[idx]
+				minUtil = max
+				minVal = acs[idx]
 			}
 		}
-		genesis = maxVal
+		genesis = minVal
 		genesis.Print()
 	}
 
