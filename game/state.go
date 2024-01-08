@@ -32,27 +32,27 @@ func (state *State) Expand() ([]State, bool) {
 	}
 	if len(opponentStates) == 0 && len(selfStates) == 0 {
 		return opponentStates, true
-	} else if len(opponentStates) == 0{
+	} else if len(opponentStates) == 0 {
 		for x := 0; x < N; x++ {
 			for y := 0; y < N; y++ {
-				if state.Board[x][y] == None{
+				if state.Board[x][y] == None {
 					state.Board[x][y] = sturn
 					state.Counts[sturn]++
 				}
 			}
 		}
 		return []State{}, true
-	}else if len(selfStates) == 0{
+	} else if len(selfStates) == 0 {
 		for x := 0; x < N; x++ {
 			for y := 0; y < N; y++ {
-				if state.Board[x][y] == None{
+				if state.Board[x][y] == None {
 					state.Board[x][y] = oturn
 					state.Counts[oturn]++
 				}
 			}
 		}
 		return []State{}, true
-	}else{
+	} else {
 		return opponentStates, false
 	}
 }
@@ -161,7 +161,6 @@ func (state *State) Move(x, y int) {
 func Utility(state *State) int {
 	//blueAcs := []State{}
 	//redAcs := []State{}
-
 	//for x := 0; x < N; x++ {
 	//	for y := 0; y < N; y++ {
 	//		if state.Board[x][y] == Blue {
@@ -173,4 +172,5 @@ func Utility(state *State) int {
 	//}
 	//return len(blueAcs) - len(redAcs)
 	return state.Counts[Blue]
+	//return 1
 }
